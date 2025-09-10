@@ -4,7 +4,7 @@ ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="robbyrussell"
 
 # Useful oh-my-zsh plugins for Le Wagon bootcamps
-plugins=(git gitfast last-working-dir common-aliases zsh-syntax-highlighting history-substring-search ssh-agent)
+plugins=(git gitfast last-working-dir common-aliases zsh-syntax-highlighting zsh-autosuggestions zsh-completions history-substring-search ssh-agent)
 
 # (macOS-only) Prevent Homebrew from reporting - https://github.com/Homebrew/brew/blob/master/docs/Analytics.md
 export HOMEBREW_NO_ANALYTICS=1
@@ -16,6 +16,9 @@ ZSH_DISABLE_COMPFIX=true
 source "${ZSH}/oh-my-zsh.sh"
 unalias rm # No interactive rm by default (brought by plugins/common-aliases)
 unalias lt # we need `lt` for https://github.com/localtunnel/localtunnel
+
+# command for zsh-completions
+autoload -U compinit && compinit
 
 # Load rbenv if installed (to manage your Ruby versions)
 export PATH="${HOME}/.rbenv/bin:${PATH}" # Needed for Linux/WSL
@@ -89,3 +92,6 @@ if [ -d "${PHPENV_ROOT}" ]; then
   export PATH="${PHPENV_ROOT}/bin:${PATH}"
   eval "$(phpenv init -)"
 fi
+
+# Load Homebrew if installed
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"

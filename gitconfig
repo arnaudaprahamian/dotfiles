@@ -61,4 +61,6 @@
   defaultBranch = master
 [user]
 	email = arnaud.aprahamian@gmail.com
-	name = Arnaud APRAHAMIAN
+	name = Arnaud
+[includeIf "gitdir:~/code/pyltech"]
+    path = ~/.gitconfig-pro
