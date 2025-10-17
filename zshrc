@@ -17,8 +17,26 @@ source "${ZSH}/oh-my-zsh.sh"
 unalias rm # No interactive rm by default (brought by plugins/common-aliases)
 unalias lt # we need `lt` for https://github.com/localtunnel/localtunnel
 
-# command for zsh-completions
-autoload -U compinit && compinit
+# Liste des chemins complets vers vos clés privées
+SSH_CUSTOM_KEYS=(
+    ~/.ssh/id_eiffage_ed25519
+    ~/.ssh/id_perso_ed25519
+    ~/.ssh/id_pyltech_rsa
+)
+
+# Fonction pour ajouter les clés qui ne sont pas déjà dans l'agent.
+# Ceci déclenchera l'invite de mot de passe (passphrase).
+if command -v ssh-add > /dev/null; then
+    for key_path in "${SSH_CUSTOM_KEYS[@]}"; do
+        # Vérifie si le fichier existe ET si la clé n'est pas déjà chargée.
+        # Le 'grep -q' cherche le nom de la clé dans la liste sans afficher de sortie.
+        if [[ -f "$key_path" ]] && ! ssh-add -l | grep -q "$(basename "$key_path")"; then
+            echo "🔑 Ajout de l'identité : $(basename "$key_path"). Saisissez votre mot de passe."
+            # L'option -q (quiet) masque la sortie de ssh-add pour ne voir que l'invite.
+            ssh-add "$key_path" 
+        fi
+    done
+fi
 
 # Load rbenv if installed (to manage your Ruby versions)
 export PATH="${HOME}/.rbenv/bin:${PATH}" # Needed for Linux/WSL
@@ -95,3 +113,4 @@ fi
 
 # Load Homebrew if installed
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+export PATH=$HOME/.local/bin:$PATH
