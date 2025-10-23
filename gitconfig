@@ -1,10 +1,11 @@
+# ~/.gitconfig (Fichier principal)
+
 [color]
   branch = auto
   diff = auto
   interactive = auto
   status = auto
   ui = auto
-
 [color "branch"]
   current = green
   remote = yellow
@@ -22,27 +23,12 @@
   d = !git --no-pager diff
   dt  = difftool
   stat = !git --no-pager diff --stat
-
-  # Set remotes/origin/HEAD -> defaultBranch (copied from https://stackoverflow.com/a/67672350/14870317)
   remoteSetHead = remote set-head origin --auto
-
-  # Get default branch name (copied from https://stackoverflow.com/a/67672350/14870317)
   defaultBranch = !git symbolic-ref refs/remotes/origin/HEAD | cut -d'/' -f4
-
-  # Clean merged branches (adapted from https://stackoverflow.com/a/6127884/14870317)
   sweep = !git branch --merged $(git defaultBranch) | grep -E -v " $(git defaultBranch)$" | xargs -r git branch -d && git remote prune origin
-
-  # http://www.jukie.net/bart/blog/pimping-out-git-log
   lg = log --graph --all --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(bold blue)%an%Creset %C(yellow)%d%Creset'
-
-  # Serve local repo. http://coderwall.com/p/eybtga
-  # Then other can access via `git clone git://#{YOUR_IP_ADDRESS}/
   serve = !git daemon --reuseaddr --verbose  --base-path=. --export-all ./.git
-
-  # Checkout to defaultBranch
   m = !git checkout $(git defaultBranch)
-
-  # Removes a file from the index
   unstage = reset HEAD --
 
 [help]
@@ -51,14 +37,42 @@
 [push]
   default = simple
 
-[branch "master"]
-  mergeoptions = --no-edit
-
+# --- AMÉLIORATIONS ---
 [pull]
-  rebase = false
+  # Garde l'historique linéaire et propre au lieu de créer des "merge commits"
+  rebase = true
+
+[rebase]
+  # Met automatiquement vos changements non-commités de côté pendant un rebase
+  autoStash = true
 
 [init]
-  defaultBranch = master
+  # Utilise "main" comme nom par défaut pour les nouvelles branches
+  defaultBranch = main
+
+[fetch]
+  # Nettoie les branches qui n'existent plus sur le serveur distant
+  prune = true
+
+# --- SIGNATURE DES COMMITS ---
+[gpg]
+  # Indique à Git d'utiliser le format SSH pour la signature
+  format = ssh
+
+[commit]
+  # Active la signature pour TOUS les commits par défaut
+  gpgsign = true
+
+# --- IDENTITÉ PAR DÉFAUT (PERSONNELLE) ---
 [user]
-	email = arnaud.aprahamian@pyl.tech
-	name = aprahamian-arnaud-PYL-TECH
+  email = arnaud.aprahamian@gmail.com
+  name = Arnaud APRAHAMIAN
+  # Clé de signature par défaut (personnelle)
+  signingkey = ~/.ssh/id_perso_ed25519.pub
+
+# --- CONFIGURATIONS CONDITIONNELLES (La magie est ici) ---
+[includeIf "gitdir:~/code/eiffage/"]
+  path = ~/.gitconfig-eiffage
+
+[includeIf "gitdir:~/code/pyltech/"]
+  path = ~/.gitconfig-pyltech
